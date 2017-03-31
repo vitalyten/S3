@@ -470,8 +470,11 @@ connection.create_bucket('mybucket')
 
 #### [boto3](http://boto3.readthedocs.io/en/latest/index.html)
 
-``` python
+##### Client integration
+
+```python
 import boto3
+
 client = boto3.client(
     's3',
     aws_access_key_id='accessKey1',
@@ -480,6 +483,24 @@ client = boto3.client(
 )
 
 lists = client.list_buckets()
+```
+
+##### Full integration (with object mapping)
+
+```python
+import os
+
+from botocore.utils import fix_s3_host
+import boto3
+
+os.environ['AWS_ACCESS_KEY_ID'] = "accessKey1"
+os.environ['AWS_SECRET_ACCESS_KEY'] = "verySecretKey1"
+
+s3 = boto3.resource(service_name='s3', endpoint_url='http://localhost:8000')
+s3.meta.client.meta.events.unregister('before-sign.s3', fix_s3_host)
+
+for bucket in s3.buckets.all():
+    print(bucket.name)
 ```
 
 ### PHP
