@@ -4,6 +4,7 @@ import async from 'async';
 import withV4 from '../support/withV4';
 import BucketUtility from '../../lib/utility/bucket-util';
 import { removeAllVersions } from '../../lib/utility/versioning-util';
+import customS3Request from '../../lib/utility/customS3Request';
 
 const sourceBucketName = 'supersourcebucket8102016';
 const sourceObjName = 'supersourceobject';
@@ -54,9 +55,8 @@ function dateConvert(d) {
     return (new Date(d)).toISOString();
 }
 
-const testing = process.env.VERSIONING === 'no' ? describe.skip : describe;
 
-testing('Object Version Copy', () => {
+describe('Object Version Copy', () => {
     withV4(sigCfg => {
         const bucketUtil = new BucketUtility('default', sigCfg);
         const s3 = bucketUtil.s3;
@@ -65,6 +65,7 @@ testing('Object Version Copy', () => {
         let lastModified;
         let versionId = undefined;
         let copySource = undefined;
+        let copySourceVersionId;
 
         function emptyAndDeleteBucket(bucketName, callback) {
             return removeAllVersions({ Bucket: bucketName }, err => {
@@ -96,6 +97,7 @@ testing('Object Version Copy', () => {
                 copySource = `${sourceBucketName}/${sourceObjName}` +
                     `?versionId=${versionId}`;
                 etagTrim = etag.substring(1, etag.length - 1);
+                copySourceVersionId = res.VersionId;
                 return s3.headObjectAsync({
                     Bucket: sourceBucketName,
                     Key: sourceObjName,
@@ -123,18 +125,50 @@ testing('Object Version Copy', () => {
         function successCopyCheck(error, response, copyVersionMetadata,
             destBucketName, destObjName, done) {
             checkNoError(error);
+            assert.strictEqual(response.CopySourceVersionId,
+              copySourceVersionId);
+            assert.notStrictEqual(response.CopySourceVersionId,
+              response.VersionId);
+            const destinationVersionId = response.VersionId;
             assert.strictEqual(response.ETag, etag);
             const copyLastModified = new Date(response.LastModified)
                 .toUTCString();
             s3.getObject({ Bucket: destBucketName,
                 Key: destObjName }, (err, res) => {
                 checkNoError(err);
+                assert.strictEqual(res.VersionId, destinationVersionId);
                 assert.strictEqual(res.Body.toString(), content);
                 assert.deepStrictEqual(res.Metadata, copyVersionMetadata);
                 assert.strictEqual(res.LastModified, copyLastModified);
                 done();
             });
         }
+
+        it('should return InvalidArgument for a request with versionId query',
+        done => {
+            const params = { Bucket: destBucketName, Key: destObjName,
+                CopySource: copySource };
+            const query = { versionId: 'testVersionId' };
+            customS3Request(s3.copyObject, params, { query }, err => {
+                assert(err, 'Expected error but did not find one');
+                assert.strictEqual(err.code, 'InvalidArgument');
+                assert.strictEqual(err.statusCode, 400);
+                done();
+            });
+        });
+
+        it('should return InvalidArgument for a request with empty string ' +
+        'versionId query', done => {
+            const params = { Bucket: destBucketName, Key: destObjName,
+            CopySource: copySource };
+            const query = { versionId: '' };
+            customS3Request(s3.copyObject, params, { query }, err => {
+                assert(err, 'Expected error but did not find one');
+                assert.strictEqual(err.code, 'InvalidArgument');
+                assert.strictEqual(err.statusCode, 400);
+                done();
+            });
+        });
 
         it('should copy a version from a source bucket to a different ' +
             'destination bucket and copy the metadata if no metadata directve' +

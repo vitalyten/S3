@@ -1,6 +1,7 @@
 {
     "port": 8000,
     "listenOn": [],
+    "replicationGroupId": "RG001",
     "restEndpoints": {
         "localhost": "file",
         "127.0.0.1": "file",
@@ -36,5 +37,9 @@
     },
     "healthChecks": {
         "allowFrom": ["127.0.0.1/8", "::1"]
+    },
+    "metadataDaemon": {
+        "host": "localhost",
+        "port": 9990
     }
 }

@@ -1,6 +1,5 @@
 import assert from 'assert';
 import async from 'async';
-import { versioning } from 'arsenal';
 
 import withV4 from '../support/withV4';
 import BucketUtility from '../../lib/utility/bucket-util';
@@ -15,17 +14,14 @@ const counter = 100;
 let bucket;
 const key = '/';
 const invalidId = 'invalidId';
-const VID_INF = versioning.VersionID.VID_INF;
-const nonExistingId = versioning.VersionID
-    .encode(`${VID_INF.slice(VID_INF.length - 1)}7`);
+const nonExistingId = '3939393939393939393936493939393939393939756e6437';
 
 function _assertNoError(err, desc) {
     assert.strictEqual(err, null, `Unexpected err ${desc}: ${err}`);
 }
 
-const testing = process.env.VERSIONING === 'no' ? describe.skip : describe;
 
-testing('put and get object acl with versioning', () => {
+describe('put and get object acl with versioning', () => {
     withV4(sigCfg => {
         const bucketUtil = new BucketUtility('default', sigCfg);
         const s3 = bucketUtil.s3;
