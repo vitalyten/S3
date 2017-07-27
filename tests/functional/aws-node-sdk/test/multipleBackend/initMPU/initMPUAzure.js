@@ -1,9 +1,9 @@
 const async = require('async');
 const assert = require('assert');
 
-const { config } = require('../../../../../lib/Config');
-const withV4 = require('../support/withV4');
-const BucketUtility = require('../../lib/utility/bucket-util');
+const { config } = require('../../../../../../lib/Config');
+const withV4 = require('../../support/withV4');
+const BucketUtility = require('../../../lib/utility/bucket-util');
 
 const azureLocation = 'azuretest';
 let azureContainerName;
