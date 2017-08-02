@@ -83,11 +83,13 @@ function exec(args, done, exitCode) {
         av = av.concat(isScality);
     }
     process.stdout.write(`${program} ${av}\n`);
-    proc.spawn(program, av, { stdio: 'inherit' }).on('exit', code => {
+    proc.spawn(program, av, { stdio: 'inherit' })
+    .on('exit', code => {
         assert.strictEqual(code, exit,
                            's3cmd did not yield expected exit status.');
         done();
-    });
+    })
+    .on('error', err => done(err));
 }
 
 // Test stdout or stderr against expected output
@@ -793,7 +795,8 @@ describe('s3cmd recursive delete with objects put by MPU', () => {
         });
     });
 
-    it('should delete all the objects and the bucket', done => {
+    it('should delete all the objects and the bucket', function itF(done) {
+        this.timeout(120000);
         exec(['rb', '-r', `s3://${bucket}`, '--debug'], done);
     });
 
@@ -806,7 +809,8 @@ describeSkipIfE2E('If no location is sent with the request', () => {
     beforeEach(done => {
         exec(['mb', `s3://${bucket}`], done);
     });
-    afterEach(done => {
+    afterEach(function afterEachF(done) {
+        this.timeout(120000);
         exec(['rb', `s3://${bucket}`], done);
     });
     // WARNING: change "us-east-1" to another locationConstraint depending
