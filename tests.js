@@ -1,25 +1,25 @@
 const { spawn } = require('child_process');
 const async = require('async');
 const assert = require('assert');
-/* eslint no-console: ["error", { allow: ["log", "error"] }] */
 function spawnAndLog(cmd, isKillingServer, cb) {
     const child = spawn(cmd, { shell: true });
-    console.log('CMD: ', cmd);
+    process.stdout.write(`Command run: ${cmd}`);
     child.stdout.on('data', data => {
-        console.log(data.toString());
+        process.stdout.write(data.toString());
     });
     child.on('error', err => {
         cb(err);
     });
     child.on('exit', exitCode => {
-        console.log(`child exited with code: ${exitCode}`);
+        process.stdout.write(`child exited with code: ${exitCode}`);
         if (exitCode === 0) {
             if (isKillingServer) {
                 const serverKiller = spawn('kill -9 $(lsof -t -i:8000)',
                   { shell: true });
                 return serverKiller.on('exit', exitKillServer => {
                     if (exitKillServer === 0) {
-                        console.log(`serverKiller exited - code: ${exitCode}`);
+                        process.stdout.write(
+                          `serverKiller exited - code: ${exitCode}`);
                         return cb();
                     }
                     return cb(`Failed killing server: ${cmd}`);

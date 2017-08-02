@@ -83,13 +83,15 @@ function exec(args, done, exitCode) {
         av = av.concat(isScality);
     }
     process.stdout.write(`${program} ${av}\n`);
-    proc.spawn(program, av, { stdio: 'inherit' })
-    .on('exit', code => {
+    const child = proc.spawn(program, av);
+    child.on('exit', code => {
         assert.strictEqual(code, exit,
                            's3cmd did not yield expected exit status.');
         done();
-    })
-    .on('error', err => done(err));
+    });
+    child.stderr.on('data', data => {
+        process.stdout.write(`${program} ${av} stderr: ${data.toString()}\n`);
+    });
 }
 
 // Test stdout or stderr against expected output
@@ -795,7 +797,7 @@ describe('s3cmd recursive delete with objects put by MPU', () => {
         });
     });
 
-    it('should delete all the objects and the bucket', function itF(done) {
+    it.only('should delete all the objects and the bucket', function itF(done) {
         this.timeout(120000);
         exec(['rb', '-r', `s3://${bucket}`, '--debug'], done);
     });
