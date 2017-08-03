@@ -797,7 +797,7 @@ describe('s3cmd recursive delete with objects put by MPU', () => {
         });
     });
 
-    it.only('should delete all the objects and the bucket', function itF(done) {
+    it('should delete all the objects and the bucket', function itF(done) {
         this.timeout(120000);
         exec(['rb', '-r', `s3://${bucket}`, '--debug'], done);
     });
