@@ -83,15 +83,16 @@ function exec(args, done, exitCode) {
         av = av.concat(isScality);
     }
     process.stdout.write(`${program} ${av}\n`);
-    const child = proc.spawn(program, av);
+    const child = proc.spawn(program, av, { stdio: 'inherit' });
     child.on('exit', code => {
         assert.strictEqual(code, exit,
                            's3cmd did not yield expected exit status.');
         done();
     });
-    child.stderr.on('data', data => {
-        process.stdout.write(`${program} ${av} stderr: ${data.toString()}\n`);
-    });
+    // child.stderr.on('data', data => {
+    //     process.stdout.write(`${program} ${av} stderr: ` +
+    //     `${data.toString()}\n`);
+    // });
 }
 
 // Test stdout or stderr against expected output
