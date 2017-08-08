@@ -66,7 +66,6 @@ destBucket, destLoc, azureKey, mdDirective, isEmptyObj, callback) {
         assert.equal(err, null, `Error in assertGetObjects: ${err}`);
 
         const [sourceRes, destRes, azureRes] = results;
-        console.log('\n\n------AZURE RES::::::: ', azureRes);
         if (isEmptyObj) {
             assert.strictEqual(sourceRes.ETag, `"${emptyMD5}"`);
             assert.strictEqual(destRes.ETag, `"${emptyMD5}"`);
@@ -95,7 +94,7 @@ destBucket, destLoc, azureKey, mdDirective, isEmptyObj, callback) {
     });
 }
 
-describeSkipIfNotMultiple.only('MultipleBackend object copy', function testSuite() {
+describeSkipIfNotMultiple('MultipleBackend object copy', function testSuite() {
     this.timeout(250000);
     withV4(sigCfg => {
         beforeEach(() => {
@@ -114,10 +113,10 @@ describeSkipIfNotMultiple.only('MultipleBackend object copy', function testSuite
 
         afterEach(() => {
             process.stdout.write('Emptying bucket\n');
-            return bucketUtil.empty(azureContainerName)
+            return bucketUtil.empty(bucket)
             .then(() => {
                 process.stdout.write('Deleting bucket\n');
-                return bucketUtil.deleteOne(azureContainerName);
+                return bucketUtil.deleteOne(bucket);
             })
             .catch(err => {
                 process.stdout.write(`Error in afterEach: ${err}\n`);
