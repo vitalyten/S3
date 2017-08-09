@@ -39,5 +39,21 @@ dependencies:
 
 test:
   override:
+     - S3BACKEND=mem npm start
+            > $CIRCLE_ARTIFACTS/server_mem_s3cmd.txt
+        & bash wait_for_local_port.bash 8000 40
+        && npm run ft_s3cmd
+    - S3BACKEND=mem npm start
+            > $CIRCLE_ARTIFACTS/server_mem_kms_s3cmd.txt
+        & bash wait_for_local_port.bash 8000 40
+        && ENABLE_KMS_ENCRYPTION=true npm run ft_s3cmd
+    - S3BACKEND=file S3VAULT=mem npm start
+            > $CIRCLE_ARTIFACTS/server_file_s3cmd.txt
+        & bash wait_for_local_port.bash 8000 40
+        && npm run ft_s3cmd
+    - S3BACKEND=file S3VAULT=mem npm start
+            > $CIRCLE_ARTIFACTS/server_file_kms_s3cmd.txt
+        & bash wait_for_local_port.bash 8000 40
+        && ENABLE_KMS_ENCRYPTION=true npm run ft_s3cmd
     - node tests:
         parallel: true

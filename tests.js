@@ -88,11 +88,11 @@ if (process.env.CIRCLE_NODE_INDEX === '1') {
           '> $CIRCLE_ARTIFACTS/server_mem_awssdk.txt ' +
           '& bash wait_for_local_port.bash 8000 40 ' +
           '&& npm run ft_awssdk', true, next),
-        next => spawnAndLog(
-          'S3BACKEND=mem npm start' +
-          '> $CIRCLE_ARTIFACTS/server_mem_s3cmd.txt ' +
-          '& bash wait_for_local_port.bash 8000 40 ' +
-          '&& npm run ft_s3cmd', true, next),
+        // next => spawnAndLog(
+        //   'S3BACKEND=mem npm start' +
+        //   '> $CIRCLE_ARTIFACTS/server_mem_s3cmd.txt ' +
+        //   '& bash wait_for_local_port.bash 8000 40 ' +
+        //   '&& npm run ft_s3cmd', true, next),
     ], err => {
         assert.equal(err, null, `Expected success but got error ${err}`);
         process.exit();
@@ -116,11 +116,11 @@ if (process.env.CIRCLE_NODE_INDEX === '2') {
           '> $CIRCLE_ARTIFACTS/server_mem_kms_awssdk.txt ' +
           '& bash wait_for_local_port.bash 8000 40 ' +
           '&& ENABLE_KMS_ENCRYPTION=true npm run ft_awssdk', true, next),
-        next => spawnAndLog(
-          'S3BACKEND=mem npm start ' +
-          '> $CIRCLE_ARTIFACTS/server_mem_kms_s3cmd.txt ' +
-          '& bash wait_for_local_port.bash 8000 40 ' +
-          '&& ENABLE_KMS_ENCRYPTION=true npm run ft_s3cmd', true, next),
+        // next => spawnAndLog(
+        //   'S3BACKEND=mem npm start ' +
+        //   '> $CIRCLE_ARTIFACTS/server_mem_kms_s3cmd.txt ' +
+        //   '& bash wait_for_local_port.bash 8000 40 ' +
+        //   '&& ENABLE_KMS_ENCRYPTION=true npm run ft_s3cmd', true, next),
         next => spawnAndLog(
           'S3BACKEND=mem npm start ' +
           '> $CIRCLE_ARTIFACTS/server_mem_kms_s3curl.txt ' +
@@ -144,11 +144,11 @@ if (process.env.CIRCLE_NODE_INDEX === '3') {
           '> $CIRCLE_ARTIFACTS/server_file_awssdk.txt ' +
           '& bash wait_for_local_port.bash 8000 40 ' +
           '&& npm run ft_awssdk', true, next),
-        next => spawnAndLog(
-          'S3BACKEND=file S3VAULT=mem npm start ' +
-          '> $CIRCLE_ARTIFACTS/server_file_s3cmd.txt ' +
-          '& bash wait_for_local_port.bash 8000 40 ' +
-          '&& npm run ft_s3cmd', true, next),
+        // next => spawnAndLog(
+        //   'S3BACKEND=file S3VAULT=mem npm start ' +
+        //   '> $CIRCLE_ARTIFACTS/server_file_s3cmd.txt ' +
+        //   '& bash wait_for_local_port.bash 8000 40 ' +
+        //   '&& npm run ft_s3cmd', true, next),
         next => spawnAndLog(
           'S3BACKEND=file S3VAULT=mem npm start ' +
           '> $CIRCLE_ARTIFACTS/server_file_s3curl.txt ' +
@@ -164,11 +164,11 @@ if (process.env.CIRCLE_NODE_INDEX === '3') {
           'S3BACKEND=file S3VAULT=mem MPU_TESTING=yes npm start ' +
           '> $CIRCLE_ARTIFACTS/server_file_kms_awssdk.txt ' +
           '& bash wait_for_local_port.bash 8000 40', true, next),
-        next => spawnAndLog(
-          'S3BACKEND=file S3VAULT=mem npm start ' +
-          '> $CIRCLE_ARTIFACTS/server_file_kms_s3cmd.txt ' +
-          '& bash wait_for_local_port.bash 8000 40 ' +
-          '&& ENABLE_KMS_ENCRYPTION=true npm run ft_s3cmd', true, next),
+        // next => spawnAndLog(
+        //   'S3BACKEND=file S3VAULT=mem npm start ' +
+        //   '> $CIRCLE_ARTIFACTS/server_file_kms_s3cmd.txt ' +
+        //   '& bash wait_for_local_port.bash 8000 40 ' +
+        //   '&& ENABLE_KMS_ENCRYPTION=true npm run ft_s3cmd', true, next),
         next => spawnAndLog(
           'S3BACKEND=file S3VAULT=mem npm start ' +
           '> $CIRCLE_ARTIFACTS/server_file_kms_s3curl.txt ' +
