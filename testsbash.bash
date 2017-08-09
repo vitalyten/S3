@@ -23,6 +23,8 @@ if [ $CIRCLE_NODE_INDEX -eq 0 ] then
   & bash wait_for_local_port.bash 8000 40
   && cd ./tests/functional/jaws && mvn test
 
+  kill -9 $(lsof -t -i:8000)
+
   S3BACKEND=mem S3DATA=multiple npm start
   $CIRCLE_ARTIFACTS/server_multiple_fog.txt
   & bash wait_for_local_port.bash 8000 40
