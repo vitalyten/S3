@@ -20,6 +20,8 @@ then
   bash wait_for_local_port.bash 9990 40 &&
   npm run multiple_backend_test
 
+  kill -9 $(lsof -t -i:9990)
+
   S3BACKEND=mem S3DATA=multiple npm start
   > $CIRCLE_ARTIFACTS/server_multiple_java.txt &
   bash wait_for_local_port.bash 8000 40 && cd ./tests/functional/jaws &&
