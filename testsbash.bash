@@ -1,4 +1,5 @@
 #!/bin/bash -x
+set -x #echo on
 
 if [ $CIRCLE_NODE_INDEX -eq 0 ]
 then
