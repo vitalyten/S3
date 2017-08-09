@@ -44,6 +44,8 @@ then
   bash wait_for_local_port.bash 8000 40 &&
   S3DATA=multiple ENABLE_KMS_ENCRYPTION=true npm run ft_awssdk
 
+  kill -9 $(lsof -t -i:8000)
+
 fi
 
 if [ $CIRCLE_NODE_INDEX -eq 1 ]
@@ -54,25 +56,35 @@ then
   bash wait_for_local_port.bash 8000 40 &&
   S3DATA=multiple ENABLE_KMS_ENCRYPTION=true npm run ft_awssdk
 
+  kill -9 $(lsof -t -i:8000)
+
   S3BACKEND=mem npm start
   > $CIRCLE_ARTIFACTS/server_mem_java.txt &
   bash wait_for_local_port.bash 8000 40 &&
   cd ./tests/functional/jaws && mvn test
+
+  kill -9 $(lsof -t -i:8000)
 
   S3BACKEND=mem npm start
   > $CIRCLE_ARTIFACTS/server_mem_fog.txt &
   bash wait_for_local_port.bash 8000 40 &&
   cd tests/functional/fog && rspec tests.rb
 
+  kill -9 $(lsof -t -i:8000)
+
   S3BACKEND=mem MPU_TESTING=yes npm start
   > $CIRCLE_ARTIFACTS/server_mem_awssdk.txt &
   bash wait_for_local_port.bash 8000 40 &&
   npm run ft_awssdk
 
+  kill -9 $(lsof -t -i:8000)
+
   S3BACKEND=mem npm start
   > $CIRCLE_ARTIFACTS/server_mem_s3cmd.txt &
   bash wait_for_local_port.bash 8000 40 &&
   npm run ft_s3cmd
+
+  kill -9 $(lsof -t -i:8000)
 
 fi
 
